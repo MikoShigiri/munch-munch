@@ -12,7 +12,7 @@ class BudgetManager:
         return sum(exp["amount"] for exp in self._expenses)
 
     def get_remaining_budget(self) -> float:
-        return self._total_budget - self._total_spent
+        return self._total_budget - self.get_total_spent()
 
     def check_threshold_alert(self, warning_percentage: float = 0.8) -> bool:
         """Returns True if spending has exceeded the warning percentage of the budget."""

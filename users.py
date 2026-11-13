@@ -42,16 +42,21 @@ class PantryItem:
 class User(ABC):
     """Abstract Base Class for Application Users."""
     
-    def __init__(self, username: str, password: str):
+    def __init__(self, username: str, email: str, password: str | None = None):
         self._username = username
+        self._email = email
         self._password = password
 
     @property
     def username(self) -> str:
         return self._username
 
+    @property
+    def email(self) -> str:
+        return self._email
+
     def authenticate(self, password: str) -> bool:
-        return self._password == password
+        return self._password is not None and self._password == password
 
     @abstractmethod
     def get_role_description(self) -> str:
@@ -62,10 +67,19 @@ class User(ABC):
 class StudentUser(User):
     """Concrete User class inheriting from User with budget capabilities."""
     
-    def __init__(self, username: str, password: str, monthly_budget: float):
-        super().__init__(username, password)
+    def __init__(self, username: str, email: str, monthly_budget: float, campus_location: str, password: str | None = None):
+        super().__init__(username, email, password)
         self._monthly_budget = monthly_budget
+        self._campus_location = campus_location
         self._total_spent = 0.0
+
+    @property
+    def email(self) -> str:
+        return self._email
+
+    @property
+    def campus_location(self) -> str:
+        return self._campus_location
 
     @property
     def monthly_budget(self) -> float:
@@ -83,7 +97,7 @@ class StudentUser(User):
         self._total_spent += amount
 
     def get_role_description(self) -> str:
-        return "Student User (Budget & Inventory Managed)"
+        return f"Student User at {self._campus_location} with a monthly budget of ${self._monthly_budget:.2f}"
 
 
 class PantryModel:
